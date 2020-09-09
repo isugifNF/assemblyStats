@@ -120,7 +120,7 @@ busco \
 -i ${genomeFile} \
 ${params.options} \
 -m ${params.mode} \
--c 16 \
+-c ${params.threads} \
 -f
 """
 // assemblyStats.swift ${genomeFile}
