@@ -102,6 +102,8 @@ new_Assemblathon.pl  ${genomeFile} > ${label}.assemblathonStats
 }
 
 process setupBUSCO {
+// this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
+
 container = "$busco_container"
 
 output:
@@ -122,7 +124,7 @@ containerOptions = "--bind $launchDir/$params.outdir/config:/augustus/config"
 
 input:
 set val(label), file(genomeFile) from genome_BUSCO
-file(config) from config_ch
+file(config) from config_ch.val
 
 output:
 file("${label}/*")

@@ -61,6 +61,8 @@ SystemExit: Cannot write to Augustus species folder, please make sure you have w
 nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir greenStats --threads 1 --options "-l mammalia_odb10" -profile condo,singularity
 
 
-singularity run --writable-tmpfs busco_v4.1.2_cv1.sif busco -i polhead.fasta -o outdir -l mammalia_odb10 -c 16 --mode genome -f
 singularity run --writable-tmpfs busco_v4.1.2_cv1.sif cp -r /augustus/config .
-export AUGUSTUS_CONFIG_PATH="$PWD/config"
+#export AUGUSTUS_CONFIG_PATH="$PWD/config"
+singularity run --writable-tmpfs --bind $PWD/config:/augustus/config busco_v4.1.2_cv1.sif busco -i polhead.fasta -o outdir -l  eukaryota_odb10 -c 16 --mode genome -f
+
+/ptmp/GIF/severin/Purcell/Green/out_green/40-polishing/busco$ nextflow pull isugifNF/assemblyStats;nextflow run isugifNF/assemblyStats --genomes polhead.fasta --outdir greenStats --threads 16 --options "-l eukaryota_odb10" -profile singularity -resume
