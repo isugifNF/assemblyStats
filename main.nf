@@ -105,6 +105,7 @@ new_Assemblathon.pl  ${genomeFile} > ${label}.assemblathonStats
 process runBUSCO {
 
 container = "$busco_container"
+containerOptions = '--writable-tmpfs'  // this is required or else you will get a permission denied to write to augustus/config/speces folder error.
 
 input:
 set val(label), file(genomeFile) from genome_BUSCO

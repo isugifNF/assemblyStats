@@ -51,3 +51,11 @@ process runAssemblathonStats {
 
 
 }
+
+
+## ERROR
+
+SystemExit: Cannot write to Augustus species folder, please make sure you have write permissions to /augustus/config/species
+
+
+nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir greenStats --threads 1 --options "-l mammalia_odb10" -profile condo,singularity 
