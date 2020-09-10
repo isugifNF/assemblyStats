@@ -118,7 +118,7 @@ cp -r /augustus/config .
 process runBUSCO {
 
 container = "$busco_container"
-containerOptions = '--bind $basedir/$params.outdir/config:/augustus/config'
+containerOptions = '--bind $baseDir/$params.outdir/config:/augustus/config'
 
 input:
 set val(label), file(genomeFile) from genome_BUSCO
