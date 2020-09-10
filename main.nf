@@ -101,14 +101,28 @@ new_Assemblathon.pl  ${genomeFile} > ${label}.assemblathonStats
 // assemblyStats.swift ${genomeFile}
 }
 
+process setupBUSCO {
+container = "$busco_container"
+
+output:
+publishDir "${params.outdir}"
+file("config") into config_ch
+
+script:
+"""
+cp -r /augustus/config .
+"""
+
+}
 
 process runBUSCO {
 
 container = "$busco_container"
-containerOptions = '--writable-tmpfs'  // this is required or else you will get a permission denied to write to augustus/config/speces folder error.
+containerOptions = '--bind $PWD/params.outdir/config:/augustus/config'
 
 input:
 set val(label), file(genomeFile) from genome_BUSCO
+file(config) from config_ch
 
 output:
 file("${label}/*")

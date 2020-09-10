@@ -2,3 +2,5 @@ work
 out_dir*
 .nextflow*
 test
+greenStats
+polhead.fasta
