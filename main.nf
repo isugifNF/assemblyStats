@@ -13,18 +13,21 @@ downpore_container = 'quay.io/biocontainers/downpore:0.3.3--h375a9b1_0'
      log.info isuGIFHeader()
      log.info """
       Usage:
-      The typical command for running the pipeline is as follows:
-      nextflow run main.nf --genomes "*fasta"  -profile docker
+      The typical command for running the pipeline are as follows:
+
+      nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
+      nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile condo,singularity --buscoOnly
 
       Mandatory arguments:
 
       --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
+      -profile singularity           as of now, this workflow only works using singularity and requires this profile [be sure singularity is in your path]
 
       Optional arguments:
       --outdir                       Output directory to place final output
       --threads                      Number of CPUs to use during the NanoPlot job [16]
       --queueSize                    Maximum number of jobs to be queued [18]
-      --options                      ["--auto-lineage"], you may also consider ["--auto-lineage-prok"],["--auto-lineage-euk"]
+      --options                      ["--auto-lineage"], you may also consider  "--auto-lineage-prok","--auto-lineage-euk",""-l eukaryota_odb10"
       --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
       buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
       --help                         This usage statement.
@@ -129,9 +132,9 @@ if (!params.listDatasets) {
   file(config) from config_ch.val
 
   output:
-  file("${label}/short_summary.specific.*.txt")
+  file("short_summary.specific.*.txt")
   publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: 'short_summary.specific.*.txt'
-  file("${label}/*")
+  file("${label}/*/*")
   publishDir "${params.outdir}/BUSCO"
 
 
