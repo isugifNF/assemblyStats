@@ -26,6 +26,7 @@ downpore_container = 'quay.io/biocontainers/downpore:0.3.3--h375a9b1_0'
       --queueSize                    Maximum number of jobs to be queued [18]
       --options                      ["--auto-lineage"], you may also consider ["--auto-lineage-prok"],["--auto-lineage-euk"]
       --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
+      buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
       --help                         This usage statement.
      """
 }
@@ -58,95 +59,96 @@ if (params.help) {
 
 
 if (!params.listDatasets) {
-Channel
- .fromPath(params.genomes)
- .map { file -> tuple(file.simpleName, file) }
- .into { genome_runAssemblyStats; genome_runAssemblathonStats; genome_BUSCO }
+  Channel
+   .fromPath(params.genomes)
+   .map { file -> tuple(file.simpleName, file) }
+   .into { genome_runAssemblyStats; genome_runAssemblathonStats; genome_BUSCO }
+
+
+  if (!params.buscoOnly) {
+    process runAssemblyStats {
+
+    container = "$swift_container"
+
+    input:
+    set val(label), file(genomeFile) from genome_runAssemblyStats
+
+    output:
+    file("${label}.assemblyStats")
+    publishDir "${params.outdir}/assemblyStats", mode: 'copy', pattern: '*.assemblyStats'
+
+    script:
+    """
+     assemblyStats.swift ${genomeFile} > ${label}.assemblyStats
+    """
+    // assemblyStats.swift ${genomeFile}
+    }
+
+    process runAssemblathonStats {
+
+    container = "$swift_container"
+
+    input:
+    set val(label), file(genomeFile) from genome_runAssemblathonStats
+
+    output:
+    file("${label}.assemblathonStats")
+    publishDir "${params.outdir}/assemblathonStats", mode: 'copy', pattern: '*.assemblathonStats'
+
+    script:
+    """
+    new_Assemblathon.pl  ${genomeFile} > ${label}.assemblathonStats
+    """
+    // assemblyStats.swift ${genomeFile}
+    }
+  } // end buscoOnly
+
+  process setupBUSCO {
+  // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
+
+  container = "$busco_container"
+
+  output:
+  publishDir "${params.outdir}"
+  file("config") into config_ch
+
+  script:
+  """
+  cp -r /augustus/config .
+  """
+
+  }
+
+  process runBUSCO {
+
+  container = "$busco_container"
+  containerOptions = "--bind $launchDir/$params.outdir/config:/augustus/config"
+
+  input:
+  set val(label), file(genomeFile) from genome_BUSCO
+  file(config) from config_ch.val
+
+  output:
+  publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: 'short_summary.specific.*.txt'
+  file("${label}/*")
+  publishDir "${params.outdir}/BUSCO"
 
 
 
-process runAssemblyStats {
+  script:
+  """
+  busco \
+  -o ${label} \
+  -i ${genomeFile} \
+  ${params.options} \
+  -m ${params.mode} \
+  -c ${params.threads} \
+  -f
+  """
+  // assemblyStats.swift ${genomeFile}
+  }
 
-container = "$swift_container"
-
-input:
-set val(label), file(genomeFile) from genome_runAssemblyStats
-
-output:
-file("${label}.assemblyStats")
-publishDir "${params.outdir}/assemblyStats", mode: 'copy', pattern: '*.assemblyStats'
-
-script:
-"""
- assemblyStats.swift ${genomeFile} > ${label}.assemblyStats
-"""
-// assemblyStats.swift ${genomeFile}
-}
-
-process runAssemblathonStats {
-
-container = "$swift_container"
-
-input:
-set val(label), file(genomeFile) from genome_runAssemblathonStats
-
-output:
-file("${label}.assemblathonStats")
-publishDir "${params.outdir}/assemblathonStats", mode: 'copy', pattern: '*.assemblathonStats'
-
-script:
-"""
-new_Assemblathon.pl  ${genomeFile} > ${label}.assemblathonStats
-"""
-// assemblyStats.swift ${genomeFile}
-}
-
-process setupBUSCO {
-// this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
-
-container = "$busco_container"
-
-output:
-publishDir "${params.outdir}"
-file("config") into config_ch
-
-script:
-"""
-cp -r /augustus/config .
-"""
-
-}
-
-process runBUSCO {
-
-container = "$busco_container"
-containerOptions = "--bind $launchDir/$params.outdir/config:/augustus/config"
-
-input:
-set val(label), file(genomeFile) from genome_BUSCO
-file(config) from config_ch.val
-
-output:
-publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: 'short_summary.specific.*.txt'
-file("${label}/*")
-publishDir "${params.outdir}/BUSCO"
-
-
-
-script:
-"""
-busco \
--o ${label} \
--i ${genomeFile} \
-${params.options} \
--m ${params.mode} \
--c ${params.threads} \
--f
-"""
-// assemblyStats.swift ${genomeFile}
-}
-
-}
+} // end if not listDatasets
 
     def isuGIFHeader() {
         // Log colors ANSI codes
