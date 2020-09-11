@@ -127,8 +127,11 @@ set val(label), file(genomeFile) from genome_BUSCO
 file(config) from config_ch.val
 
 output:
+publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: 'short_summary.specific.*.txt'
 file("${label}/*")
 publishDir "${params.outdir}/BUSCO"
+
+
 
 script:
 """
