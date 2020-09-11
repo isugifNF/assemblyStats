@@ -133,7 +133,7 @@ if (!params.listDatasets) {
 
   output:
   file("${label}/short_summary.specific.*.txt")
-  publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: 'short_summary.specific.*.txt'
+  publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: "${label}/short_summary.specific.*.txt"
   file("${label}/*")
   publishDir "${params.outdir}/BUSCO"
 
