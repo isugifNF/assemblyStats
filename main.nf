@@ -132,7 +132,7 @@ if (!params.listDatasets) {
   file(config) from config_ch.val
 
   output:
-  file("short_summary.specific.*.txt")
+  file("${label}/short_summary.specific.*.txt")
   publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: 'short_summary.specific.*.txt'
   file("${label}/*/*")
   publishDir "${params.outdir}/BUSCO"
