@@ -123,6 +123,7 @@ if (!params.listDatasets) {
   }
 
   process runBUSCO {
+  label 'runBUSCO'
 
   container = "$busco_container"
   containerOptions = "--bind $launchDir/$params.outdir/config:/augustus/config"
