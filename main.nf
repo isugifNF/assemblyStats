@@ -6,7 +6,7 @@
 
 swift_container = 'swift'
 //  busco_container = 'ezlabgva/busco:v4.1.2_cv1'
-busco_container = 'quay.io/biocontainers/busco:3.0.2--py_13
+busco_container = 'quay.io/biocontainers/busco:3.0.2--py_13'
 downpore_container = 'quay.io/biocontainers/downpore:0.3.3--h375a9b1_0'
 
  def helpMessage() {
