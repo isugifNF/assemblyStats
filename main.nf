@@ -113,8 +113,8 @@ if (!params.listDatasets) {
 
   output:
   publishDir "${params.outdir}"
-//busco4  file("config") into config_ch
-file("augustus/config") into config_ch
+  //busco4  file("config") into config_ch
+  file("augustus/config") into config_ch
 
   script:
   """
@@ -131,6 +131,7 @@ file("augustus/config") into config_ch
   container = "$busco_container"
 //  containerOptions = "--bind $launchDir/$params.outdir/config:/augustus/config"
   containerOptions = "--bind $launchDir/$params.outdir/augustus/config:/augustus/config"
+
   input:
   set val(label), file(genomeFile) from genome_BUSCO
   file(config) from config_ch.val
@@ -146,7 +147,7 @@ file("augustus/config") into config_ch
 
   script:
   """
-
+  export AUGUSTUS_CONFIG_PATH="$launchDir/$params.outdir/augustus/config"
   run_BUSCO.py \
   -o ${label} \
   -i ${genomeFile} \
