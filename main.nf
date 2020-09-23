@@ -129,8 +129,8 @@ file("augustus/config") into config_ch
   label 'runBUSCO'
 
   container = "$busco_container"
-  containerOptions = "--bind $launchDir/$params.outdir/config:/augustus/config"
-
+//  containerOptions = "--bind $launchDir/$params.outdir/config:/augustus/config"
+  containerOptions = "--bind $launchDir/$params.outdir/augustus/config:/augustus/config"
   input:
   set val(label), file(genomeFile) from genome_BUSCO
   file(config) from config_ch.val
