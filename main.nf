@@ -141,12 +141,12 @@ file("augustus/config") into config_ch
   file("${label}/*")
   publishDir "${params.outdir}/BUSCO"
 
-
+  //#alias busco=run_BUSCO.py
+  //#busco \
 
   script:
   """
-  #alias busco=run_BUSCO.py
-  #busco \
+
   run_BUSCO.py \
   -o ${label} \
   -i ${genomeFile} \
