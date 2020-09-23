@@ -118,6 +118,7 @@ if (!params.listDatasets) {
   script:
   """
   # cp -r /augustus/config . #busco4
+  mkdir augustus
   cp -r /usr/local/config augustus/config
   """
 
