@@ -147,7 +147,7 @@ file("augustus/config") into config_ch
   """
   #alias busco=run_BUSCO.py
   #busco \
-  run_BUSCO.py
+  run_BUSCO.py \
   -o ${label} \
   -i ${genomeFile} \
   ${params.options} \
