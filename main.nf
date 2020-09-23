@@ -113,7 +113,8 @@ if (!params.listDatasets) {
 
   output:
   publishDir "${params.outdir}"
-  file("config") into config_ch
+//busco4  file("config") into config_ch
+file("augustus/config") into config_ch
 
   script:
   """
