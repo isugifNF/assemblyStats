@@ -117,7 +117,8 @@ if (!params.listDatasets) {
 
   script:
   """
-  cp -r /augustus/config .
+  # cp -r /augustus/config . #busco4
+  cp -r /usr/local/config augustus/config
   """
 
   }
@@ -142,6 +143,7 @@ if (!params.listDatasets) {
 
   script:
   """
+  alias busco=run_BUSCO.py
   busco \
   -o ${label} \
   -i ${genomeFile} \
