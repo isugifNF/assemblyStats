@@ -65,10 +65,6 @@ process runBUSCOlist  {
 result.subscribe { println it }
 
 if (!params.listDatasets) {
-  if ( params.genomes.toString().length() < 1 ) {
-    helpMessage()
-    exit 0
-  }
 
   Channel
     .fromPath(params.genomes, checkIfExists:true) // https://gitter.im/nextflow-io/nextflow?at=5d893dc428c1df0ed6840907
@@ -93,7 +89,6 @@ if (!params.listDatasets) {
       """
       assemblyStats.swift ${genomeFile} > ${label}.assemblyStats
       """
-      // assemblyStats.swift ${genomeFile}
     }
 
     process runAssemblathonStats {
