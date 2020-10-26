@@ -1,7 +1,13 @@
 #!/usr/bin/env perl
 
+# jen_notes: always use strict and warnings
+# https://perlmaven.com/always-use-strict-and-use-warnings
+
+# The following code seems similar to http://korflab.ucdavis.edu/Unix_and_Perl/FAlite.pm
 package FAlite;
 use strict;
+use warnings;
+
 sub new {
 	my ($class, $fh) = @_;
 	if (ref $fh !~ /GLOB/)
@@ -16,6 +22,7 @@ sub new {
 	chomp $this->{LASTLINE};
 	return $this;
 }
+
 sub nextEntry {
 	my ($this) = @_;
 	return 0 if not defined $this->{LASTLINE};

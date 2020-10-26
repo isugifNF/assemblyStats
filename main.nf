@@ -11,6 +11,7 @@
 swift_container = 'swift'
 busco_container = 'ezlabgva/busco:v4.1.2_cv1'
 downpore_container = 'quay.io/biocontainers/downpore:0.3.3--h375a9b1_0'
+// jc_note: downpore_container is not used anywhere...
 
 def helpMessage() {
   log.info isuGIFHeader()
