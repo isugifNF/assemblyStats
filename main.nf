@@ -43,15 +43,6 @@ if (params.help) {
   helpMessage()
   exit 0
 }
-if (!params.genomes) {
-  log.info """
-  =====
-  ERROR: --genomes "*.fasta" is mandatory!
-  =====
-  """.stripIndent()
-  helpMessage()
-  exit 0
-}
 
 process runBUSCOlist  {
   container = "$busco_container"
@@ -74,8 +65,14 @@ process runBUSCOlist  {
 result.subscribe { println it }
 
 if (!params.listDatasets) {
+  if ( params.genomes.toString().length() < 1 ) {
+    helpMessage()
+    exit 0
+  }
+
   Channel
-    .fromPath(params.genomes)
+    .fromPath(params.genomes, checkIfExists:true) // https://gitter.im/nextflow-io/nextflow?at=5d893dc428c1df0ed6840907
+    // .ifEmpty { exit 1, "genome fasta file not found" }
     .map { file -> tuple(file.simpleName, file) }
     .into { genome_runAssemblyStats; genome_runAssemblathonStats; genome_BUSCO }
 
