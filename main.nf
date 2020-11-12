@@ -8,7 +8,6 @@
  nextflow assemblyStats
  *************************************/
 
-<<<<<<< HEAD
   swift_container = 'swift'
   busco_container = 'ezlabgva/busco:v4.1.2_cv1'
 
@@ -35,36 +34,7 @@
       buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
       --help                         This usage statement.
      """
-=======
-swift_container = 'swift'
-busco_container = 'ezlabgva/busco:v4.1.2_cv1'
-downpore_container = 'quay.io/biocontainers/downpore:0.3.3--h375a9b1_0'
-// jc_note: downpore_container is not used anywhere...
 
-def helpMessage() {
-  log.info isuGIFHeader()
-  log.info """
-  Usage:
-  The typical command for running the pipeline are as follows:
-
-  nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
-  nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile condo,singularity --buscoOnly
-
-  Mandatory arguments:
-
-  --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
-  -profile singularity           as of now, this workflow only works using singularity and requires this profile [be sure singularity is in your path]
-
-  Optional arguments:
-  --outdir                       Output directory to place final output
-  --threads                      Number of CPUs to use during the NanoPlot job [16]
-  --queueSize                    Maximum number of jobs to be queued [18]
-  --options                      ["--auto-lineage"], you may also consider  "--auto-lineage-prok","--auto-lineage-euk",""-l eukaryota_odb10"
-  --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
-  --buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
-  --help                         This usage statement.
-  """
->>>>>>> 90eecb3242cf7f88a6fad0e83060bb348bb10e92
 }
 
 // Show help message
@@ -141,8 +111,8 @@ if (!params.listDatasets) {
 
   process setupBUSCO {
     // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
+    container = "$busco_container"
 
-<<<<<<< HEAD
   output:
   publishDir "${params.outdir}"
   file("config") into config_ch
@@ -154,19 +124,7 @@ if (!params.listDatasets) {
   cp -r /augustus/config .
   echo "$busco_container" > Busco_version.txt
   """
-=======
-    container = "$busco_container"
 
-    output:
-    publishDir "${params.outdir}"
-    file("config") into config_ch
->>>>>>> 90eecb3242cf7f88a6fad0e83060bb348bb10e92
-
-    script:
-    """
-    cp -r /augustus/config .
-    """
-  }
 
   process runBUSCO {
     label 'runBUSCO'
