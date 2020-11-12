@@ -23,28 +23,112 @@
 **isugifNF/assemblyStats** is a nextflow pipeline to assess the quality of your genome assembl(y/ies).  It runs three separate programs
 
 * [AssemblyStats](https://github.com/ISUgenomics/swift/blob/master/bin/assemblyStats.swift)
-  * I found AssemblathonStats formatting to be not to my liking so I rewrote the script to output the same statistics but in an easier to read format with a few additional outputs such as the top 5 largest and smallest scaffolds
-  * <details><summary>Example</summary>
+  * I found AssemblathonStats formatting to not be to my liking so I rewrote the script to output the same statistics but in an easier to read format with a few additional outputs such as the top 5 largest and smallest scaffolds
+    <details><summary>Example</summary>
 
     <pre>
+    ```
+    Number of Scaffolds:                 3
+    Total Nucleotide content             4658411
+    Longest Scaffold:                  4553770       >NC_017168.1 Yersinia pestis A1122, complete sequence
+    Shortest Scaffolds:                  8431        >NC_017170.1 Yersinia pestis A1122 plasmid unnamed, complete sequence
+    Mean Scaffold Size                   1552803
+    Median Scaffold length               96210.0
+    N50 Scaffold length                  4553770
+    L50 Scaffold length                  1
+    N90 Scaffold length                  4553770
+    L90 Scaffold length                  1
+                                          #Scaffs   % Scaffolds      Nucleotides     % Nucleotide Content
+    Number of Scaffolds [0-1K) nt         0          0.0 %             0               0.0 %
+    Number of Scaffolds [1K-10K) nt       1          33.33 %         8431       0.180 %
+    Number of Scaffolds [10K-100K) nt     1          33.33 %         96210   2.065 %
+    Number of Scaffolds [100K-1M) nt      0          0.0 %   0       0.0 %
+    Number of Scaffolds [1M-10M) nt       1          33.33 %         4553770         97.75 %
+    Number of Scaffolds > 10M nt          0          0.0 %   0       0.0 %
 
+    ```
 
     </pre>
     </details>
 * [AssemblathonStats](https://github.com/KorfLab/Assemblathon/blob/master/assemblathon_stats.pl)
   * Technically this is a modified version of this script that includes N90/L90 as well.
-  * <details><summary>Example</summary>
+    <details><summary>Example</summary>
 
     <pre>
-
+    ```
+    ---------------- Information for assembly 'Ecoli.fasta' ----------------
+                                     Number of scaffolds          3
+                                 Total size of scaffolds    4658411
+                                        Longest scaffold    4553770
+                                       Shortest scaffold       8431
+                             Number of scaffolds > 1K nt          3 100.0%
+                            Number of scaffolds > 10K nt          2  66.7%
+                           Number of scaffolds > 100K nt          1  33.3%
+                             Number of scaffolds > 1M nt          1  33.3%
+                            Number of scaffolds > 10M nt          0   0.0%
+                                      Mean scaffold size    1552804
+                                    Median scaffold size      96210
+                                     N50 scaffold length    4553770
+                                      L50 scaffold count          1
+                                     n90 scaffold length    4553770
+                                      L90 scaffold count          1
+                                             scaffold %A      26.07
+                                             scaffold %C      23.69
+                                             scaffold %G      23.94
+                                             scaffold %T      26.30
+                                             scaffold %N       0.00
+                                     scaffold %non-ACGTN       0.00
+                         Number of scaffold non-ACGTN nt          0
+            Percentage of assembly in scaffolded contigs       0.0%
+          Percentage of assembly in unscaffolded contigs     100.0%
+                  Average number of contigs per scaffold        1.0
+                  Average length of break (>25 Ns) between contigs in scaffold          0
+                                       Number of contigs          3
+                          Number of contigs in scaffolds          0
+                      Number of contigs not in scaffolds          3
+                                   Total size of contigs    4658411
+                                          Longest contig    4553770
+                                         Shortest contig       8431
+                               Number of contigs > 1K nt          3 100.0%
+                              Number of contigs > 10K nt          2  66.7%
+                             Number of contigs > 100K nt          1  33.3%
+                               Number of contigs > 1M nt          1  33.3%
+                              Number of contigs > 10M nt          0   0.0%
+                                        Mean contig size    1552804
+                                      Median contig size      96210
+                                       N50 contig length    4553770
+                                        L50 contig count          1
+                                       n90 contig length    4553770
+                                        L90 contig count          1
+                                               contig %A      26.07
+                                               contig %C      23.69
+                                               contig %G      23.94
+                                               contig %T      26.30
+                                               contig %N       0.00
+                                       contig %non-ACGTN       0.00
+                           Number of contig non-ACGTN nt          0
+    ```
 
     </pre>
     </details>
-* [BUSCO](https://busco.ezlab.org) Benchmarking Universal Single Copy Orthologs
-  * <details><summary>Example</summary>
 
+* [BUSCO](https://busco.ezlab.org)  Orthologs
+  * Benchmarking Universal Single Copy
+    <details><summary>Example</summary>
     <pre>
 
+    ```
+
+            ***** Results:*****
+
+            C:100.0%[S:100.0%,D:0.0%],F:0.0%,M:0.0%,n:124      
+            124     Complete BUSCOs (C)                        
+            124     Complete and single-copy BUSCOs (S)        
+            0       Complete and duplicated BUSCOs (D)         
+            0       Fragmented BUSCOs (F)                      
+            0       Missing BUSCOs (M)                         
+            124     Total BUSCO groups searched     
+    ```
 
     </pre>
     </details>
@@ -102,7 +186,8 @@ nextflow run isugifNF/assemblyStats --help
 ```
 <details><summary>Output</summary>
 
-              <pre>
+<pre>
+
               N E X T F L O W  ~  version 20.07.1
               Launching `isugifNF/assemblyStats/main.nf` [magical_colden] - revision: a156628d62
               ----------------------------------------------------
@@ -134,7 +219,7 @@ nextflow run isugifNF/assemblyStats --help
                     buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
                     --help                         This usage statement.
 
-              </pre>
+</pre>
 </details>
 
 We can get a list of the BUSCO datasets we can run using this set of parameters.  The `-profile docker` is important as this workflow relies on containers and will error out if you don't use `docker` or `singularity`
@@ -329,10 +414,50 @@ executor >  local (1)
             </pre>
 </details>
 
-Let's use a small Bacterial genome for the test. So we will use  bacteria_odb10
+Let's use a couple of small Bacterial genome for the test. So we will use  bacteria_odb10
 
 ```
- nextflow run isugifNF/assemblyStats --genomes "P*.fasta"  --options "-l bacteria_odb10" -profile docker --threads 4
+#E. coli
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Yersinia_pestis/representative/GCF_000222975.1_ASM22297v1/GCF_000222975.1_ASM22297v1_genomic.fna.gz
+mv GCF_000222975.1_ASM22297v1_genomic.fna.gz Ecoli.fasta
+gunzip Ecoli.fasta.gz
+
+#Yersinia Pestis
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Escherichia_coli/reference/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz
+mv GCF_000222975.1_ASM22297v1_genomic.fna.gz Yerpes.fasta.gz
+gunzip Yerpes.fasta.gz
+nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_odb10" -profile docker --threads 4
 ```
+
+Expected output
+```
+N E X T F L O W  ~  version 20.07.1
+Launching `isugifNF/assemblyStats` [sad_boyd] - revision: a4272e736e [master]
+executor >  local (7)
+[-        ] process > runBUSCOlist             -
+[a1/5af149] process > runAssemblyStats (1)     [100%] 2 of 2 ✔
+[17/bb92c9] process > runAssemblathonStats (2) [100%] 2 of 2 ✔
+[28/1103ba] process > setupBUSCO               [100%] 1 of 1 ✔
+[ba/962b47] process > runBUSCO (1)             [100%] 2 of 2 ✔
+Completed at: 12-Nov-2020 12:55:13
+Duration    : 1m 7s
+CPU hours   : (a few seconds)
+Succeeded   : 7
+```
+
+## Output directory
+
+The output directory default is out_dir and can be changed by specifying the `--outdir` parameter on the command line.  It contains
+
+|Folder| Description|
+| -- | -- |
+|BUSCO | soft links to BUSCO output files, logs and blast results|
+|BUSCOResults| short_summary.specific final output|
+|assemblathonStats| text file of assemblathon statistics for the genome|
+|assemblyStats| text file of assemblyStats statistics for the genome|
+|Busco_version.txt| Version of BUSCO used in the container|
+
 
 ### Credits
+
+This workflow was built by Andrew Severin ([@isugif](https://github.com/isugif)) and Jennifer Chang ([@j23414](https://github.com/j23414))
