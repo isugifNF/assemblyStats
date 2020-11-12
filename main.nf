@@ -1,13 +1,11 @@
 #! /usr/bin/env nextflow
 
 /*************************************
- nextflow nanoQCtrim
+ nextflow assemblyStats
  *************************************/
 
-swift_container = 'swift'
+  swift_container = 'swift'
   busco_container = 'ezlabgva/busco:v4.1.2_cv1'
-
-downpore_container = 'quay.io/biocontainers/downpore:0.3.3--h375a9b1_0'
 
  def helpMessage() {
      log.info isuGIFHeader()
@@ -21,7 +19,7 @@ downpore_container = 'quay.io/biocontainers/downpore:0.3.3--h375a9b1_0'
       Mandatory arguments:
 
       --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
-      -profile singularity           as of now, this workflow only works using singularity and requires this profile [be sure singularity is in your path]
+      -profile singularity (docker)          as of now, this workflow only works using singularity or docker and requires this profile [be sure singularity is in your path or loaded by a module]
 
       Optional arguments:
       --outdir                       Output directory to place final output
@@ -114,10 +112,13 @@ if (!params.listDatasets) {
   output:
   publishDir "${params.outdir}"
   file("config") into config_ch
+  file("Busco_version.txt")
+  publishDir "${params.outdir}", mode: 'copy', pattern: 'Busco_version.txt'
 
   script:
   """
   cp -r /augustus/config .
+  echo "$busco_container" > Busco_version.txt
   """
 
   }
