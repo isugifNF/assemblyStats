@@ -31,7 +31,8 @@
       --queueSize                    Maximum number of jobs to be queued [18]
       --options                      ["--auto-lineage"], you may also consider  "--auto-lineage-prok","--auto-lineage-euk",""-l eukaryota_odb10"
       --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
-      buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
+      --buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
+      --account                      Some HPCs require you supply an account name for tracking usage.  You can supply that here.
       --help                         This usage statement.
      """
 
