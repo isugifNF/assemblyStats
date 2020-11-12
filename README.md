@@ -182,7 +182,7 @@ mv GCF_000005845.2_ASM584v2_genomic.fna.gz Yerpes.fasta.gz
 gunzip Yerpes.fasta.gz
 ```
 
-Run Nextflow.  I am using singularity on my remote HPC called Nova. This repo contains config files for different machines for how to submit using the SLURM scheduler. 
+Run Nextflow.  I am using singularity on my remote HPC called Nova. This repo contains config files for different machines for how to submit using the SLURM scheduler.
 
 ```
 nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_odb10" -profile singularity,nova
@@ -482,3 +482,10 @@ The output directory default is out_dir and can be changed by specifying the `--
 ### Credits
 
 This workflow was built by Andrew Severin ([@isugif](https://github.com/isugif)) and Jennifer Chang ([@j23414](https://github.com/j23414))
+
+
+### Potential Errors
+
+* #### ssh://git@github.com/isugifNF/assemblyStats.git: Auth fail
+
+  This occurs if you have not set up github authorization on your remote machine yet.  See this [Introduction to Github](https://bioinformaticsworkbook.org/Appendix/github/introgithub#gsc.tab=0) Tutorial on how to set up an ssh key. 
