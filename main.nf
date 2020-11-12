@@ -124,7 +124,7 @@ if (!params.listDatasets) {
   cp -r /augustus/config .
   echo "$busco_container" > Busco_version.txt
   """
-
+  }
 
   process runBUSCO {
     label 'runBUSCO'
