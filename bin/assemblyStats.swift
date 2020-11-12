@@ -160,6 +160,7 @@ import Foundation
             print("Longest Scaffolds:                   ",fastas[0].length,fastas[1].length,fastas[2].length,fastas[3].length,fastas[4].length,"\t",fastas[0].def,fastas[1].def,fastas[2].def,fastas[3].def,fastas[4].def)  // longest scaffold is the first scaffold in the sorted Array
             print("Shortest Scaffolds:                 ",fastas[fastas.count-1].length,fastas[fastas.count-2].length,fastas[fastas.count-3].length,fastas[fastas.count-4].length,fastas[fastas.count-5].length, "\t", fastas[fastas.count-1].def,fastas[fastas.count-2].def,fastas[fastas.count-3].def,fastas[fastas.count-4].def,fastas[fastas.count-5].def) // shortest scaffold is the last scaffold in the Array
             } else {
+            print("Longest Scaffold:                 ",fastas[0].length, "\t", fastas[0].def)
             print("Shortest Scaffolds:                 ",fastas[fastas.count-1].length, "\t", fastas[fastas.count-1].def)
         }
         print("Mean Scaffold Size                  ",totalNucleotideContent/fastas.count)
