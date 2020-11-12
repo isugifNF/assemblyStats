@@ -163,9 +163,30 @@ Usage:
 
 ```
 
+
+
 </details>
 
+#### Example
 
+Download a dataset of Bacteria
+```
+#E. coli
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Yersinia_pestis/representative/GCF_000222975.1_ASM22297v1/GCF_000222975.1_ASM22297v1_genomic.fna.gz
+mv GCF_000222975.1_ASM22297v1_genomic.fna.gz Ecoli.fasta.gz
+gunzip Ecoli.fasta.gz
+
+#Yersinia Pestis
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Escherichia_coli/reference/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz
+mv GCF_000005845.2_ASM584v2_genomic.fna.gz Yerpes.fasta.gz
+gunzip Yerpes.fasta.gz
+```
+
+Run Nextflow.  I am using singularity on my remote HPC called Nova. This repo contains config files for different machines for how to submit using the SLURM scheduler. 
+
+```
+nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_odb10" -profile singularity,nova
+```
 ### Dependencies if running locally
 
 Nextflow is written in groovy which requires java version 1.8 or greater (check version using `java -version`). But otherwise can be installed if you have a working linux command-line.
@@ -419,12 +440,12 @@ Let's use a couple of small Bacterial genome for the test. So we will use  bacte
 ```
 #E. coli
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Yersinia_pestis/representative/GCF_000222975.1_ASM22297v1/GCF_000222975.1_ASM22297v1_genomic.fna.gz
-mv GCF_000222975.1_ASM22297v1_genomic.fna.gz Ecoli.fasta
+mv GCF_000222975.1_ASM22297v1_genomic.fna.gz Ecoli.fasta.gz
 gunzip Ecoli.fasta.gz
 
 #Yersinia Pestis
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Escherichia_coli/reference/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz
-mv GCF_000222975.1_ASM22297v1_genomic.fna.gz Yerpes.fasta.gz
+mv GCF_000005845.2_ASM584v2_genomic.fna.gz Yerpes.fasta.gz
 gunzip Yerpes.fasta.gz
 nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_odb10" -profile docker --threads 4
 ```
