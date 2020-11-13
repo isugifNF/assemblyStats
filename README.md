@@ -187,6 +187,21 @@ Run Nextflow.  I am using singularity on my remote HPC called Nova. This repo co
 ```
 nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_odb10" -profile singularity,nova
 ```
+
+### Output directory
+
+The output directory default is out_dir and can be changed by specifying the `--outdir` parameter on the command line.  It contains
+
+|Folder| Description|
+| -- | -- |
+|BUSCO | soft links to BUSCO output files, logs and blast results|
+|BUSCOResults| short_summary.specific final output|
+|assemblathonStats| text file of assemblathon statistics for the genome|
+|assemblyStats| text file of assemblyStats statistics for the genome|
+|Busco_version.txt| Version of BUSCO used in the container|
+
+
+
 ### Dependencies if running locally
 
 Nextflow is written in groovy which requires java version 1.8 or greater (check version using `java -version`). But otherwise can be installed if you have a working linux command-line.
@@ -465,18 +480,6 @@ Duration    : 1m 7s
 CPU hours   : (a few seconds)
 Succeeded   : 7
 ```
-
-## Output directory
-
-The output directory default is out_dir and can be changed by specifying the `--outdir` parameter on the command line.  It contains
-
-|Folder| Description|
-| -- | -- |
-|BUSCO | soft links to BUSCO output files, logs and blast results|
-|BUSCOResults| short_summary.specific final output|
-|assemblathonStats| text file of assemblathon statistics for the genome|
-|assemblyStats| text file of assemblyStats statistics for the genome|
-|Busco_version.txt| Version of BUSCO used in the container|
 
 
 ### Credits
