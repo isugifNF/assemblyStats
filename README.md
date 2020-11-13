@@ -488,4 +488,10 @@ This workflow was built by Andrew Severin ([@isugif](https://github.com/isugif))
 
 * #### ssh://git@github.com/isugifNF/assemblyStats.git: Auth fail
 
-  This occurs if you have not set up github authorization on your remote machine yet.  See this [Introduction to Github](https://bioinformaticsworkbook.org/Appendix/github/introgithub#gsc.tab=0) Tutorial on how to set up an ssh key. 
+  This occurs if you have not set up github authorization on your remote machine yet.  See this [Introduction to Github](https://bioinformaticsworkbook.org/Appendix/github/introgithub#gsc.tab=0) Tutorial on how to set up an ssh key.
+* #### WARN: Singularity cache directory has not been defined
+  If you are planning on running this program more than once or more than one workflow it is best to set the NXF_SINGULARITY_CACHEDIR to a common location
+  ```
+  export NXF_SINGULARITY_CACHEDIR=/location/of/singularity/container/folder
+  ```
+  Place that in your `.bashrc` file.

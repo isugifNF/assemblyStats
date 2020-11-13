@@ -9,7 +9,7 @@
  *************************************/
 
   swift_container = 'swift'
-  busco_container = 'ezlabgva/busco:v4.1.2_cv1'
+  busco_container = 'ezlabgva/busco:v4.1.4_cv1'
 
  def helpMessage() {
      log.info isuGIFHeader()
