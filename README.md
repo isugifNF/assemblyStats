@@ -495,3 +495,5 @@ This workflow was built by Andrew Severin ([@isugif](https://github.com/isugif))
   export NXF_SINGULARITY_CACHEDIR=/location/of/singularity/container/folder
   ```
   Place that in your `.bashrc` file.
+* #### Singularity pull is too slow
+  If it takes a really long time for your singularity images to be downloaded using nextflow, you can do it manually using `singularity pull` the first time.
