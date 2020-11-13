@@ -188,7 +188,7 @@ Run Nextflow.  I am using singularity on my remote HPC called Nova. This repo co
 nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_odb10" -profile singularity,nova
 ```
 
-### Output directory
+### Expected Output
 
 The output directory default is out_dir and can be changed by specifying the `--outdir` parameter on the command line.  It contains
 
