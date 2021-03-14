@@ -1,15 +1,11 @@
 #! /usr/bin/env nextflow
 
-// Jennifer: I'll delete notes in a month (Nov 26, 2020). I'm including educational material on software development best-practices
-//jc_note: Indentation is important in that it helps readability
-//         https://bit.ly/3kxsdwh
-
 /*************************************
  nextflow assemblyStats
  *************************************/
 
-  swift_container = 'swift'
-  busco_container = 'ezlabgva/busco:v4.1.4_cv1'
+swift_container = 'swift'
+busco_container = 'ezlabgva/busco:v4.1.4_cv1'
 
  def helpMessage() {
      log.info isuGIFHeader()
@@ -67,7 +63,7 @@ result.subscribe { println it }
 if (!params.listDatasets) {
 
   Channel
-    .fromPath(params.genomes, checkIfExists:true) // https://gitter.im/nextflow-io/nextflow?at=5d893dc428c1df0ed6840907
+    .fromPath(params.genomes, checkIfExists:true)
     // .ifEmpty { exit 1, "genome fasta file not found" }
     .map { file -> tuple(file.simpleName, file) }
     .into { genome_runAssemblyStats; genome_runAssemblathonStats; genome_BUSCO }
@@ -110,7 +106,7 @@ if (!params.listDatasets) {
     }
   } // end buscoOnly
 
-  process setupBUSCO {
+process setupBUSCO {
     // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
     container = "$busco_container"
 
@@ -125,9 +121,9 @@ if (!params.listDatasets) {
   cp -r /augustus/config .
   echo "$busco_container" > Busco_version.txt
   """
-  }
+}
 
-  process runBUSCO {
+process runBUSCO {
     label 'runBUSCO'
 
     container = "$busco_container"

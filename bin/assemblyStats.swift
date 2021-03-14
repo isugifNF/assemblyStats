@@ -2,10 +2,8 @@
 
 //  File.swift
 //
-//
 //  Created by Andrew J Severin on 5/29/20.
 //
-// jc_note: Google Swift Style Guide: https://google.github.io/swift/
 
 import Foundation
 
