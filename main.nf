@@ -125,7 +125,8 @@ process setupBUSCO {
 
 process runBUSCO {
     label 'runBUSCO'
-
+    scratch false
+    errorStrategy 'finish'
     container = "$busco_container"
     //containerOptions   = "--bind $launchDir/$params.outdir/config:/augustus/config"
   //  containerOptions = "-v $launchDir/$params.outdir/config:/augustus/config"
