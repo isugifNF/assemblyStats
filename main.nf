@@ -1,5 +1,7 @@
 #! /usr/bin/env nextflow
 
+nextflow.enable.dsl=2
+
 /*************************************
  nextflow assemblyStats
  *************************************/
@@ -7,31 +9,26 @@
 swift_container = 'swift'
 busco_container = 'ezlabgva/busco:v5.1.2_cv1'
 
- def helpMessage() {
-     log.info isuGIFHeader()
-     log.info """
-      Usage:
-      The typical command for running the pipeline are as follows:
-
-      nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
-      nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile condo,singularity --buscoOnly
-
-      Mandatory arguments:
-
-      --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
-      -profile singularity (docker)          as of now, this workflow only works using singularity or docker and requires this profile [be sure singularity is in your path or loaded by a module]
-
-      Optional arguments:
-      --outdir                       Output directory to place final output
-      --threads                      Number of CPUs to use during the NanoPlot job [16]
-      --queueSize                    Maximum number of jobs to be queued [18]
-      --options                      ["--auto-lineage"], you may also consider  "--auto-lineage-prok","--auto-lineage-euk",""-l eukaryota_odb10"
-      --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
-      --buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
-      --account                      Some HPCs require you supply an account name for tracking usage.  You can supply that here.
-      --help                         This usage statement.
-     """
-
+def helpMessage() {
+  log.info isuGIFHeader()
+  log.info """
+    Usage:
+    The typical command for running the pipeline are as follows:
+     nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
+    nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile condo,singularity --buscoOnly
+     Mandatory arguments:
+     --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
+    -profile singularity (docker)          as of now, this workflow only works using singularity or docker and requires this profile [be sure singularity is in your path or loaded by a module]
+     Optional arguments:
+    --outdir                       Output directory to place final output
+    --threads                      Number of CPUs to use during the NanoPlot job [16]
+    --queueSize                    Maximum number of jobs to be queued [18]
+    --options                      ["--auto-lineage"], you may also consider  "--auto-lineage-prok","--auto-lineage-euk",""-l eukaryota_odb10"
+    --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
+    --buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
+    --account                      Some HPCs require you supply an account name for tracking usage.  You can supply that here.
+    --help                         This usage statement.
+  """
 }
 
 // Show help message
@@ -43,13 +40,8 @@ if (params.help) {
 process runBUSCOlist  {
   container = "$busco_container"
 
-  when:
-  params.listDatasets == true
-
-  output:
-  file("list.txt")
+  output: tuple path("list.txt")
   publishDir "${params.outdir}"
-  stdout result
 
   script:
   """
@@ -58,62 +50,16 @@ process runBUSCOlist  {
   """
 }
 
-result.subscribe { println it }
-
-if (!params.listDatasets) {
-
-  Channel
-    .fromPath(params.genomes, checkIfExists:true)
-    // .ifEmpty { exit 1, "genome fasta file not found" }
-    .map { file -> tuple(file.simpleName, file) }
-    .into { genome_runAssemblyStats; genome_runAssemblathonStats; genome_BUSCO }
-
-
-  if (!params.buscoOnly) {
-    process runAssemblyStats {
-
-      container = "$swift_container"
-
-      input:
-      set val(label), file(genomeFile) from genome_runAssemblyStats
-
-      output:
-      file("${label}.assemblyStats")
-      publishDir "${params.outdir}/assemblyStats", mode: 'copy', pattern: '*.assemblyStats'
-
-      script:
-      """
-      assemblyStats.swift ${genomeFile} > ${label}.assemblyStats
-      """
-    }
-
-    process runAssemblathonStats {
-
-      container = "$swift_container"
-
-      input:
-      set val(label), file(genomeFile) from genome_runAssemblathonStats
-
-      output:
-      file("${label}.assemblathonStats")
-      publishDir "${params.outdir}/assemblathonStats", mode: 'copy', pattern: '*.assemblathonStats'
-
-      script:
-      """
-      new_Assemblathon.pl  ${genomeFile} > ${label}.assemblathonStats
-      """
-      // assemblyStats.swift ${genomeFile}
-    }
-  } // end buscoOnly
 
 process setupBUSCO {
-    // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
-    container = "$busco_container"
+  // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
+  container = "$busco_container"
 
-  output:
+  output: path("config")
   publishDir "${params.outdir}"
-  file("config") into config_ch
-  file("Busco_version.txt")
+//  file("config") into config_ch
+//  file("Busco_version.txt")
+
   publishDir "${params.outdir}", mode: 'copy', pattern: 'Busco_version.txt'
 
   script:
@@ -124,35 +70,69 @@ process setupBUSCO {
 }
 
 process runBUSCO {
-    label 'runBUSCO'
-    scratch false
-    errorStrategy 'finish'
-    container = "$busco_container"
-    //containerOptions   = "--bind $launchDir/$params.outdir/config:/augustus/config"
-  //  containerOptions = "-v $launchDir/$params.outdir/config:/augustus/config"
-    input:
-    set val(label), file(genomeFile) from genome_BUSCO
-    file(config) from config_ch.val
+  label 'runBUSCO'
+  scratch false
+  errorStrategy 'finish'
+  container = "$busco_container"
+  //containerOptions   = "--bind $launchDir/$params.outdir/config:/augustus/config"
+//  containerOptions = "-v $launchDir/$params.outdir/config:/augustus/config"
+  input: tuple val(label), path(genomeFile), path(config)
+  output: tuple path("${label}/short_summary.specific.*.txt"), path("${label}/*")
+  publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: "${label}/short_summary.specific.*.txt"
+  publishDir "${params.outdir}/BUSCO"
+  script:
+  """
+  busco \
+  -o ${label} \
+  -i ${genomeFile} \
+  ${params.options} \
+  -m ${params.mode} \
+  -c ${params.threads} \
+  -f
+  """
+} 
 
-    output:
-    file("${label}/short_summary.specific.*.txt")
-    publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: "${label}/short_summary.specific.*.txt"
-    file("${label}/*")
-    publishDir "${params.outdir}/BUSCO"
+process runAssemblyStats {
+  container = "$swift_container"
+  
+  input: tuple val(label), path(genomeFile)
+  output: path("${label}.assemblyStats")
+  publishDir "${params.outdir}/assemblyStats", mode: 'copy', pattern: '*.assemblyStats'
+ 
+  script:
+  """
+  assemblyStats.swift ${genomeFile} > ${label}.assemblyStats
+  """
+}
 
-    script:
-    """
-    busco \
-    -o ${label} \
-    -i ${genomeFile} \
-    ${params.options} \
-    -m ${params.mode} \
-    -c ${params.threads} \
-    -f
-    """
-    // assemblyStats.swift ${genomeFile}
+process runAssemblathonStats {
+  container = "$swift_container"
+  input: tuple val(label), path(genomeFile)
+  output: path("${label}.assemblathonStats")
+  publishDir "${params.outdir}/assemblathonStats", mode: 'copy', pattern: '*.assemblathonStats'
+  script:
+  """
+  new_Assemblathon.pl  ${genomeFile} > ${label}.assemblathonStats
+  """
+}
+  // assemblyStats.swift ${genomeFile}
+
+workflow {
+  if(params.listDatasets) {
+    runBUSCOlist()
+  } else {
+    genome_ch = channel.fromPath(params.genome, checkIfExists:true) 
+    config_ch = setupBUSCO()
+
+
+    genome_ch | map { file -> [file.simpleName, file] } | combine(config_ch) | runBUSCO
+
+    if(!params.buscoOnly) {
+      genome_ch | map { file -> [file.simpleName, file] } | (runAssemblyStats & runAssemblathonStats)
+    }
+
   }
-} // end if not listDatasets
+}
 
 def isuGIFHeader() {
   // Log colors ANSI codes
