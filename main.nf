@@ -14,20 +14,20 @@ def helpMessage() {
   log.info """
     Usage:
     The typical command for running the pipeline are as follows:
-     nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
-    nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile condo,singularity --buscoOnly
-     Mandatory arguments:
-     --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
-    -profile singularity (docker)          as of now, this workflow only works using singularity or docker and requires this profile [be sure singularity is in your path or loaded by a module]
-     Optional arguments:
-    --outdir                       Output directory to place final output
-    --threads                      Number of CPUs to use during the NanoPlot job [16]
-    --queueSize                    Maximum number of jobs to be queued [18]
-    --options                      ["--auto-lineage"], you may also consider  "--auto-lineage-prok","--auto-lineage-euk",""-l eukaryota_odb10"
-    --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
-    --buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
-    --account                      Some HPCs require you supply an account name for tracking usage.  You can supply that here.
-    --help                         This usage statement.
+      nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
+      nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile ceres,singularity --buscoOnly
+    Mandatory arguments:
+      --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
+      -profile singularity (docker)  as of now, this workflow only works using singularity or docker and requires this profile [be sure singularity is in your path or loaded by a module]
+    Optional arguments:
+      --outdir                       Output directory to place final output
+      --threads                      Number of CPUs to use during the NanoPlot job [default:40]
+      --queueSize                    Maximum number of jobs to be queued [default:18]
+      --options                      [default:'--auto-lineage'], you may also consider  "--auto-lineage-prok","--auto-lineage-euk", "-l eukaryota_odb10"
+      --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
+      --buscoOnly                    When you just want to run a different lineage and not rerun the assemblathon stats
+      --account                      Some HPCs require you supply an account name for tracking usage.  You can supply that here.
+      --help                         This usage statement.
   """
 }
 
@@ -41,12 +41,11 @@ process runBUSCOlist  {
   container = "$busco_container"
 
   output: tuple path("list.txt")
-  publishDir "${params.outdir}"
+  publishDir "${params.outdir}", mode: 'copy'
 
   script:
   """
-  busco --list-datasets > list.txt
-  cat list.txt
+  ${busco_app} --list-datasets > list.txt
   """
 }
 
@@ -55,11 +54,10 @@ process setupBUSCO {
   // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
   container = "$busco_container"
 
-  output: path("config")
+  output: path("config"), path("Busco_version.txt")
   publishDir "${params.outdir}"
 //  file("config") into config_ch
 //  file("Busco_version.txt")
-
   publishDir "${params.outdir}", mode: 'copy', pattern: 'Busco_version.txt'
 
   script:
@@ -74,21 +72,21 @@ process runBUSCO {
   scratch false
   errorStrategy 'finish'
   container = "$busco_container"
-  //containerOptions   = "--bind $launchDir/$params.outdir/config:/augustus/config"
-//  containerOptions = "-v $launchDir/$params.outdir/config:/augustus/config"
+
   input: tuple val(label), path(genomeFile), path(config)
   output: tuple path("${label}/short_summary.specific.*.txt"), path("${label}/*")
-  publishDir "${params.outdir}/BUSCOResults/${label}/", mode: 'copy', pattern: "${label}/short_summary.specific.*.txt"
-  publishDir "${params.outdir}/BUSCO"
+  publishDir "${params.outdir}/BUSCOResults", mode: 'copy', pattern: "${label}/short_summary.specific.*.txt"
+  publishDir "${params.outdir}/BUSCO", mode: 'copy', pattern: "${label}/*"
   script:
   """
-  busco \
-  -o ${label} \
-  -i ${genomeFile} \
-  ${params.options} \
-  -m ${params.mode} \
-  -c ${params.threads} \
-  -f
+  PROC=\$((`nproc`))
+  ${busco_app} \
+    -o ${label} \
+    -i ${genomeFile} \
+    ${params.options} \
+    -m ${params.mode} \
+    -c \${PROC} \
+    -f
   """
 } 
 
@@ -119,11 +117,10 @@ process runAssemblathonStats {
 
 workflow {
   if(params.listDatasets) {
-    runBUSCOlist()
+    runBUSCOlist | splitText | view
   } else {
     genome_ch = channel.fromPath(params.genome, checkIfExists:true) 
-    config_ch = setupBUSCO()
-
+    config_ch = setupBUSCO | map {n -> n.get(0)}
 
     genome_ch | map { file -> [file.simpleName, file] } | combine(config_ch) | runBUSCO
 
