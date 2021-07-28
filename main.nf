@@ -54,7 +54,7 @@ process setupBUSCO {
   // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
   container = "$busco_container"
 
-  output: path("config"), path("Busco_version.txt")
+  output:tuple path("config"), path("Busco_version.txt")
   publishDir "${params.outdir}"
 //  file("config") into config_ch
 //  file("Busco_version.txt")
