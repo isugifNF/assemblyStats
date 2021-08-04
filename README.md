@@ -133,7 +133,7 @@
 
 Run Assembly statistics on a genome assembly (BUSCO and assemblyStats and new_Assemblathon.pl)
 
-### Installation and running
+### Installation
 
 Assuming the system already has [nextflow](https://www.nextflow.io/) and [singularity](https://sylabs.io/singularity/), running the following should automatically pull the pipeline. 
 
@@ -164,7 +164,32 @@ Optional arguments:
 
 </details>
 
-#### Example
+#### Singularity Container
+
+Programs required for this workflow are included in two singularity containers [docker://swift](https://hub.docker.com/_/swift) and [docker://ezlabgva/busco](https://hub.docker.com/r/ezlabgva/busco). These containers should be automatically pulled by nextflow. (Will only need to run `singularity pull` if website connection is unstable. On HPC machines, the singularity pull may time out, in which case we recommend manually pulling the singularity images and placing it in the `work/singularity` folder.
+
+<details><summary>Manually pulling the singuarlity images</summary>
+
+Run the following to manually pull the two singularity containers. If on the HPC, you may need to be on the dtn node.
+
+```
+singularity pull  --name swift.img docker://swift > /dev/null
+singularity pull  --name ezlabgva-busco-v5.1.2_cv1.img docker://ezlabgva/busco:v5.1.2_cv1 > /dev/null
+
+ls *.img
+#> ezlabgva-busco-v5.1.2_cv1.img  swift.img
+```
+
+When you attempted to run this pipeline, Nextflow should have created a `work/singularity` folder in the current directory. If not, create it and add the singularity images.
+
+```
+mkdir -p work/singularity
+mv *.img work/singularity/.
+```
+  
+</details>
+
+### Example Run
 
 Download a dataset of Bacteria
 
