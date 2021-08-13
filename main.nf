@@ -80,9 +80,10 @@ process runBUSCO {
   script:
   """
   PROC=\$((`nproc`))
+  cat ${genomeFile} | tr '|' '_' > ${genomeFile.simpleName}_fixheaders.fna
   ${busco_app} \
     -o ${label} \
-    -i ${genomeFile} \
+    -i ${genomeFile.simpleName}_fixheaders.fna \
     ${params.options} \
     -m ${params.mode} \
     -c \${PROC} \
