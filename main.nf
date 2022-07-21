@@ -55,7 +55,7 @@ process setupBUSCO {
     container = "$busco_container"
 	errorStrategy 'ignore'
 
-//   output:tuple path("config"), path("Busco_version.txt")
+   output:tuple path("config"), path("Busco_version.txt")
 //  file("config") into config_ch
 //  file("Busco_version.txt")
     publishDir "${params.outdir}", mode: 'copy', pattern: 'Busco_version.txt'
@@ -121,7 +121,7 @@ workflow {
     runBUSCOlist | splitText | view
   } else {
     genome_ch = channel.fromPath(params.genome, checkIfExists:true) 
-    config_ch = setupBUSCO | map {n -> n.get(0)}
+    config_ch = setupBUSCO | map {n -> n.getAt(0)}
 
     genome_ch | map { file -> [file.simpleName, file] } | combine(config_ch) | runBUSCO
 
