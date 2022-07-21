@@ -109,7 +109,7 @@ if (!params.listDatasets) {
 process setupBUSCO {
     // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
     container = "$busco_container"
-
+	errorStrategy 'ignore'
   output:
   publishDir "${params.outdir}"
   file("config") into config_ch
