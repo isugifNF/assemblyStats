@@ -150,33 +150,33 @@ import Foundation
 
 
 // PRINT OUTPUT
-    print("Number of Scaffolds:                ",numScaffs)
-    print("Total Nucleotide content            ",totalNucleotideContent)
+    print("Number of Scaffolds:",numScaffs,separator: "\t")
+    print("Total Nucleotide content:",totalNucleotideContent,separator: "\t")
     if numScaffs > 1 {
 
         if fastas.count > 5 {
-            print("Longest Scaffolds:                   ",fastas[0].length,fastas[1].length,fastas[2].length,fastas[3].length,fastas[4].length,"\t",fastas[0].def,fastas[1].def,fastas[2].def,fastas[3].def,fastas[4].def)  // longest scaffold is the first scaffold in the sorted Array
-            print("Shortest Scaffolds:                 ",fastas[fastas.count-1].length,fastas[fastas.count-2].length,fastas[fastas.count-3].length,fastas[fastas.count-4].length,fastas[fastas.count-5].length, "\t", fastas[fastas.count-1].def,fastas[fastas.count-2].def,fastas[fastas.count-3].def,fastas[fastas.count-4].def,fastas[fastas.count-5].def) // shortest scaffold is the last scaffold in the Array
+            print("Longest Scaffolds:","\t",fastas[0].length,fastas[1].length,fastas[2].length,fastas[3].length,fastas[4].length,"\t",fastas[0].def,fastas[1].def,fastas[2].def,fastas[3].def,fastas[4].def)  // longest scaffold is the first scaffold in the sorted Array
+            print("Shortest Scaffolds:","\t",fastas[fastas.count-1].length,fastas[fastas.count-2].length,fastas[fastas.count-3].length,fastas[fastas.count-4].length,fastas[fastas.count-5].length,"\t", fastas[fastas.count-1].def,fastas[fastas.count-2].def,fastas[fastas.count-3].def,fastas[fastas.count-4].def,fastas[fastas.count-5].def) // shortest scaffold is the last scaffold in the Array
             } else {
-            print("Longest Scaffold:                 ",fastas[0].length, "\t", fastas[0].def)
-            print("Shortest Scaffolds:                 ",fastas[fastas.count-1].length, "\t", fastas[fastas.count-1].def)
+            print("Longest Scaffold:",fastas[0].length, fastas[0].def,separator: "\t")
+            print("Shortest Scaffolds:",fastas[fastas.count-1].length, fastas[fastas.count-1].def,separator: "\t")
         }
-        print("Mean Scaffold Size                  ",totalNucleotideContent/fastas.count)
-        print("Median Scaffold length              ",calculateMedian(array: fastaLengths, isSorted: true))
-        print("N50 Scaffold length                 ",N50)
-        print("L50 Scaffold length                 ",L50)
-        print("N90 Scaffold length                 ",N90)
-        print("L90 Scaffold length                 ",L90)
+        print("Mean Scaffold Size:",totalNucleotideContent/fastas.count,separator: "\t")
+        print("Median Scaffold length:",calculateMedian(array: fastaLengths, isSorted: true),separator: "\t")
+        print("N50 Scaffold length:",N50,separator: "\t")
+        print("L50 Scaffold length:",L50,separator: "\t")
+        print("N90 Scaffold length:",N90,separator: "\t")
+        print("L90 Scaffold length:",L90,separator: "\t")
 
 
-        print("                                    ")
-        print("                                     ","#Scaffs\t% Scaffolds\t Nucleotides \t % Nucleotide Content")
-        print("Number of Scaffolds [0-1K) nt        ",NumScaffsLess1K,"\t",percentOfTotal(count: NumScaffsLess1K,totalCount: fastas.count),"% \t",NcountScaffsLess1K,"\t\t",percentOfTotal(count: NcountScaffsLess1K,totalCount: totalNucleotideContent),"%")
-        print("Number of Scaffolds [1K-10K) nt      ",NumScaffsGtr1K,"\t",percentOfTotal(count: NumScaffsGtr1K,totalCount: fastas.count),"% \t",NcountScaffsGtr1K,"\t",percentOfTotal(count: NcountScaffsGtr1K,totalCount: totalNucleotideContent),"%")
-        print("Number of Scaffolds [10K-100K) nt    ",NumScaffsGtr10K,"\t",percentOfTotal(count: NumScaffsGtr10K,totalCount: fastas.count),"% \t",NcountScaffsGtr10K,"\t",percentOfTotal(count: NcountScaffsGtr10K,totalCount: totalNucleotideContent),"%")
-        print("Number of Scaffolds [100K-1M) nt     ",NumScaffsGtr100K,"\t",percentOfTotal(count: NumScaffsGtr100K,totalCount: fastas.count),"% \t",NcountScaffsGtr100K,"\t",percentOfTotal(count: NcountScaffsGtr100K,totalCount: totalNucleotideContent),"%")
-        print("Number of Scaffolds [1M-10M) nt      ",NumScaffsGtr1M,"\t",percentOfTotal(count: NumScaffsGtr1M,totalCount: fastas.count),"% \t",NcountScaffsGtr1M,"\t",percentOfTotal(count: NcountScaffsGtr1M,totalCount: totalNucleotideContent),"%")
-        print("Number of Scaffolds > 10M nt         ",NumScaffsGtr10M,"\t",percentOfTotal(count: NumScaffsGtr10M,totalCount: fastas.count),"% \t",NcountScaffsGtr10M,"\t",percentOfTotal(count: NcountScaffsGtr10M,totalCount: totalNucleotideContent),"%")
+        print("")
+        print("\t","#Scaffs\t%Scaffolds\tNucleotides\t%Nucleotide_Content",separator: "\t")
+        print("Number of Scaffolds [0-1K) nt:",NumScaffsLess1K,percentOfTotal(count: NumScaffsLess1K,totalCount: fastas.count),NcountScaffsLess1K,percentOfTotal(count: NcountScaffsLess1K,totalCount: totalNucleotideContent),separator: "\t")
+        print("Number of Scaffolds [1K-10K) nt:",NumScaffsGtr1K,percentOfTotal(count: NumScaffsGtr1K,totalCount: fastas.count),NcountScaffsGtr1K,percentOfTotal(count: NcountScaffsGtr1K,totalCount: totalNucleotideContent),separator: "\t")
+        print("Number of Scaffolds [10K-100K) nt:",NumScaffsGtr10K,percentOfTotal(count: NumScaffsGtr10K,totalCount: fastas.count),NcountScaffsGtr10K,percentOfTotal(count: NcountScaffsGtr10K,totalCount: totalNucleotideContent),separator: "\t")
+        print("Number of Scaffolds [100K-1M) nt:",NumScaffsGtr100K,percentOfTotal(count: NumScaffsGtr100K,totalCount: fastas.count),NcountScaffsGtr100K,percentOfTotal(count: NcountScaffsGtr100K,totalCount: totalNucleotideContent),separator: "\t")
+        print("Number of Scaffolds [1M-10M) nt:",NumScaffsGtr1M,percentOfTotal(count: NumScaffsGtr1M,totalCount: fastas.count),NcountScaffsGtr1M,percentOfTotal(count: NcountScaffsGtr1M,totalCount: totalNucleotideContent),separator: "\t")
+        print("Number of Scaffolds > 10M nt:",NumScaffsGtr10M,percentOfTotal(count: NumScaffsGtr10M,totalCount: fastas.count),NcountScaffsGtr10M,percentOfTotal(count: NcountScaffsGtr10M,totalCount: totalNucleotideContent),separator: "\t")
     } else {
         print("Only a single scaffold, No additional statistics will be calculated")
     }

@@ -16,8 +16,6 @@
 
 ---
 
-
-
 ### Introduction
 
 **isugifNF/assemblyStats** is a nextflow pipeline to assess the quality of your genome assembl(y/ies).  It runs three separate programs
@@ -135,42 +133,66 @@
 
 Run Assembly statistics on a genome assembly (BUSCO and assemblyStats and new_Assemblathon.pl)
 
-### Installation and running
+### Installation
 
+Assuming the system already has [nextflow](https://www.nextflow.io/) and [singularity](https://sylabs.io/singularity/), running the following should automatically pull the pipeline. 
+
+```
+nextflow run isugifNF/assemblyStats --help
+```
 
 <details><summary>see usage statement</summary>
 
 ```
 Usage:
-    The typical command for running the pipeline are as follows:
-
-    nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
-    nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile condo,singularity --buscoOnly
-
-    Mandatory arguments:
-
-    --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
-    -profile singularity (docker)           as of now, this workflow only works using singularity or docker and requires this profile [be sure singularity is in your path]
-
-    Optional arguments:
-    --outdir                       Output directory to place final output
-    --threads                      Number of CPUs to use during the NanoPlot job [16]
-    --queueSize                    Maximum number of jobs to be queued [18]
-    --options                      ["--auto-lineage"], you may also consider  "--auto-lineage-prok","--auto-lineage-euk",""-l eukaryota_odb10"
-    --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
-    --buscoOnly                      When you just want to run a different lineage and not rerun the assemblathon stats
-    --account                      Some HPCs require you supply an account name for tracking usage.  You can supply that here.
-    --help                         This usage statement.
-
+The typical command for running the pipeline are as follows:
+  nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l eukaryota_odb10" -profile condo,singularity
+  nextflow run isugifNF/assemblyStats --genomes "*fasta" --outdir newStats3 --threads 16 --options "-l mollusca_odb10" -profile ceres,singularity --buscoOnly
+Mandatory arguments:
+  --genomes                      genome assembly fasta files to run stats on. (./data/*.fasta)
+  -profile singularity (docker)  as of now, this workflow only works using singularity or docker and requires this profile [be sure singularity is in your path or loaded by a module]
+Optional arguments:
+  --outdir                       Output directory to place final output
+  --threads                      Number of CPUs to use during the NanoPlot job [default:40]
+  --queueSize                    Maximum number of jobs to be queued [default:18]
+  --options                      [default:'--auto-lineage'], you may also consider  "--auto-lineage-prok","--auto-lineage-euk", "-l eukaryota_odb10"
+  --listDatasets                 Display the list of available BUSCO lineage datasets to use in --options pipeline parameter.
+  --buscoOnly                    When you just want to run a different lineage and not rerun the assemblathon stats
+  --account                      Some HPCs require you supply an account name for tracking usage.  You can supply that here.
+  --help                         This usage statement.
 ```
-
-
 
 </details>
 
-#### Example
+#### Singularity Container
+
+Programs required for this workflow are included in two singularity containers [docker://swift](https://hub.docker.com/_/swift) and [docker://ezlabgva/busco](https://hub.docker.com/r/ezlabgva/busco). These containers should be automatically pulled by nextflow. (Will only need to run `singularity pull` if website connection is unstable. On HPC machines, the singularity pull may time out, in which case we recommend manually pulling the singularity images and placing it in the `work/singularity` folder.
+
+<details><summary>Manually pulling the singuarlity images</summary>
+
+Run the following to manually pull the two singularity containers. If on the HPC, you may need to be on the dtn node.
+
+```
+singularity pull  --name swift.img docker://swift > /dev/null
+singularity pull  --name ezlabgva-busco-v5.1.2_cv1.img docker://ezlabgva/busco:v5.1.2_cv1 > /dev/null
+
+ls *.img
+#> ezlabgva-busco-v5.1.2_cv1.img  swift.img
+```
+
+When you attempted to run this pipeline, Nextflow should have created a `work/singularity` folder in the current directory. If not, create it and add the singularity images.
+
+```
+mkdir -p work/singularity
+mv *.img work/singularity/.
+```
+  
+</details>
+
+### Example Run
 
 Download a dataset of Bacteria
+
 ```
 #E. coli
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/Yersinia_pestis/representative/GCF_000222975.1_ASM22297v1/GCF_000222975.1_ASM22297v1_genomic.fna.gz
@@ -186,7 +208,10 @@ gunzip Yerpes.fasta.gz
 Run Nextflow.  I am using singularity on my remote HPC called Nova. This repo contains config files for different machines for how to submit using the SLURM scheduler.
 
 ```
-nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_odb10" -profile singularity,nova
+nextflow run isugifNF/assemblyStats \
+  --genomes "*.fasta"  \
+  --options "-l bacteria_odb10" \
+  -profile singularity,nova
 ```
 
 ### Expected Output
@@ -194,13 +219,12 @@ nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_
 The output directory default is out_dir and can be changed by specifying the `--outdir` parameter on the command line.  It contains
 
 |Folder| Description|
-| -- | -- |
+| :-- | :-- |
 |BUSCO | soft links to BUSCO output files, logs and blast results|
 |BUSCOResults| short_summary.specific final output|
 |assemblathonStats| text file of assemblathon statistics for the genome|
 |assemblyStats| text file of assemblyStats statistics for the genome|
 |Busco_version.txt| Version of BUSCO used in the container|
-
 
 
 ### Dependencies if running locally
@@ -218,9 +242,11 @@ ls -ltr nextflow
 ```
 
 First let's look at the help message
+
 ```
 nextflow run isugifNF/assemblyStats --help
 ```
+
 <details><summary>Output</summary>
 
 <pre>
@@ -264,10 +290,11 @@ We can get a list of the BUSCO datasets we can run using this set of parameters.
 ```
 nextflow run isugifNF/assemblyStats --listDatasets -profile docker
 ```
+
 <details><summary>Output</summary>
 
 <pre>
-            N E X T F L O W  ~  version 20.07.1
+N E X T F L O W  ~  version 20.07.1
 Launching `isugifNF/assemblyStats/main.nf` [amazing_colden] - revision: a156628d62
 executor >  local (1)
 [6c/31848c] process > runBUSCOlist [  0%] 0 of 1
@@ -467,6 +494,7 @@ nextflow run isugifNF/assemblyStats --genomes "*.fasta"  --options "-l bacteria_
 ```
 
 Expected output
+
 ```
 N E X T F L O W  ~  version 20.07.1
 Launching `isugifNF/assemblyStats` [sad_boyd] - revision: a4272e736e [master]
@@ -481,7 +509,6 @@ Duration    : 1m 7s
 CPU hours   : (a few seconds)
 Succeeded   : 7
 ```
-
 
 ### Credits
 
@@ -501,4 +528,5 @@ This workflow was built by Andrew Severin ([@isugif](https://github.com/isugif))
   Place that in your `.bashrc` file.
 
 * #### Singularity pull is too slow
+
   If it takes a really long time for your singularity images to be downloaded using nextflow, you can do it manually using `singularity pull` the first time.
