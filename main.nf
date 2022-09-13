@@ -62,7 +62,7 @@ process setupBUSCO {
 
   script:
   """
-  mkdir ../../../$params.outdir/config
+  #mkdir ../../../$params.outdir/config
   cp -r /augustus/config .
   echo "$busco_container" > Busco_version.txt
   """
