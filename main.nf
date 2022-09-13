@@ -50,6 +50,7 @@ process runBUSCOlist  {
 }
 
 
+
 process setupBUSCO {
     // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
    container = "$busco_container"
@@ -59,6 +60,7 @@ process setupBUSCO {
 //  file("config") into config_ch
 //  file("Busco_version.txt")
     publishDir "${params.outdir}", mode: 'copy', pattern: 'Busco_version.txt'
+    publishDir "${params.outdir}", mode: 'copy', pattern: 'config'
 
   script:
   """
@@ -127,7 +129,7 @@ workflow {
     genome_ch | map { file -> [file.simpleName, file] } | combine(config_ch) | runBUSCO
 
     if(!params.buscoOnly) {
-      genome_ch | map { file -> [file.simpleName, file] } | (runAssemblyStats & runAssemblathonStats)
+      genome_ch |  map { file -> [file.simpleName, file] } | (runAssemblyStats & runAssemblathonStats)
     }
 
   }
