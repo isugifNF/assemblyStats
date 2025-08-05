@@ -7,7 +7,7 @@ nextflow.enable.dsl=2
  *************************************/
 
 swift_container = 'swift'
-busco_container = 'ezlabgva/busco:v5.1.2_cv1'
+busco_container = 'ezlabgva/busco:v6.0.0_cv1'
 
 def helpMessage() {
   log.info isuGIFHeader()
