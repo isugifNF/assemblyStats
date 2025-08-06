@@ -50,24 +50,23 @@ process runBUSCOlist  {
 }
 
 
-
 process setupBUSCO {
-    // this setup is required because BUSCO runs Augustus that requires writing to the config/species folder.  So this folder must be bound outside of the container and therefore needs to be copied outside the container first.
    container = "$busco_container"
    errorStrategy 'ignore'
    scratch = false
-   output:tuple path("config"), path("Busco_version.txt")
-//  file("config") into config_ch
-//  file("Busco_version.txt")
-    publishDir "${params.outdir}", mode: 'copy', pattern: 'Busco_version.txt'
-    publishDir "${params.outdir}", mode: 'copy', pattern: 'config'
 
-  script:
-  """
-  #mkdir ../../../$params.outdir/config
-  cp -r /augustus/config .
-  echo "$busco_container" > Busco_version.txt
-  """
+   output:
+     tuple path("config"), path("Busco_version.txt")
+
+   publishDir "${params.outdir}", mode: 'copy', pattern: 'Busco_version.txt'
+   publishDir "${params.outdir}", mode: 'copy', pattern: 'config'
+
+   script:
+   """
+   #cp -r /augustus/config .
+   mkdir config
+   echo "$busco_container" > Busco_version.txt
+   """
 }
 
 process runBUSCO {
